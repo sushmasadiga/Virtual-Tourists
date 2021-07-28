@@ -16,8 +16,8 @@ class PhotoCell: UICollectionViewCell {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     public static let reuseId = "photoCell"
-    var id: UUID? = nil
-    var photo: Photo!
+    /*var id: UUID? = nil
+    var photo: Photo!*/
     
     func initWithPhoto(_ photo: Photo) {
         

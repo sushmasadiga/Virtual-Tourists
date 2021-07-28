@@ -10,7 +10,7 @@ import CoreData
 import MapKit
 
 class Pin: NSManagedObject {
-
+    
     var coordinate: CLLocationCoordinate2D {
         get {
             return .init(latitude: latitude, longitude: longitude)

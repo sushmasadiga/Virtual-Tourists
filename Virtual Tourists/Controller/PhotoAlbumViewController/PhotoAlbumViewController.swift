@@ -18,6 +18,7 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var newCollectionsButton: UIButton!
     
+    
     var pin: Pin!
     var currentLatitude: Double?
     var currentLongitude: Double?
@@ -25,6 +26,23 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
     var flickrPhotos: [FlickrPhoto] = []
     let numberOfColumns: CGFloat = 3
     var fetchedResultsController: NSFetchedResultsController<Photo>!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        mapView.delegate = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        let savedPhotos = reloadSavedData()
+        if savedPhotos != nil && savedPhotos?.count != 0 {savedPhotoObjects = savedPhotos!
+            showSavedResult()
+        } else {
+            showNewResult()
+        }
+        setCenter()
+        activityIndicator.startAnimating()
+    }
     
     
     fileprivate func reloadSavedData() -> [Photo]? {
@@ -56,7 +74,7 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
     }
     
     fileprivate func getFlickrPhotos() {
-        FlickrClient.shared.getFlickrPhotos(lat: currentLatitude!, lon: currentLongitude!, page: 1) { (photos, error) in
+        FlickrClient.shared.getFlickrPhoto(lat: currentLatitude!, lon: currentLongitude!, page: 1) { (photos, error) in
             
             if let error = error {
                 DispatchQueue.main.async {
@@ -85,22 +103,7 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        mapView.delegate = self
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        
-        let savedPhotos = reloadSavedData()
-        if savedPhotos != nil && savedPhotos?.count != 0 {savedPhotoObjects = savedPhotos!
-            showSavedResult()
-        } else {
-            showNewResult()
-        }
-        setCenter()
-        activityIndicator.startAnimating()
-    }
+   
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -142,7 +145,7 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
     
     fileprivate func getRandomFlickrImages() {
         let random = Int.random(in: 2...4)
-        FlickrClient.shared.getFlickrPhotos(lat: currentLatitude!, lon: currentLongitude!, page: random, completion: { (photos, error) in
+        FlickrClient.shared.getFlickrPhoto(lat: currentLatitude!, lon: currentLongitude!, page: random, completion: { (photos, error) in
             
             if let error = error {
                 DispatchQueue.main.async {

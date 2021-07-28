@@ -12,8 +12,20 @@ import CoreData
 import CoreLocation
 
 class MapViewController: UIViewController, UIGestureRecognizerDelegate, NSFetchedResultsControllerDelegate, CLLocationManagerDelegate {
-
+    
     @IBOutlet weak var mapView: MKMapView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        mapView.delegate = self
+        setCenter()
+        setUpFetchedResultsController()
+        findCurrentLocation()
+        let myLongPress: UILongPressGestureRecognizer = UILongPressGestureRecognizer()
+        myLongPress.addTarget(self, action: #selector(recognizeLongPress(_ :)))
+        mapView.addGestureRecognizer(myLongPress)
+    }
     
     fileprivate let locationManager: CLLocationManager = CLLocationManager()
     
@@ -63,18 +75,6 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, NSFetche
         mapView.region = myRegion
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-         // Do any additional setup after loading the view.
-       
-        mapView.delegate = self
-        setCenter()
-        setUpFetchedResultsController()
-        findCurrentLocation()
-        let myLongPress: UILongPressGestureRecognizer = UILongPressGestureRecognizer()
-        myLongPress.addTarget(self, action: #selector(recognizeLongPress(_ :)))
-        mapView.addGestureRecognizer(myLongPress)
-    }
     
     @objc private func recognizeLongPress(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == UIGestureRecognizer.State.began else { return }
@@ -93,11 +93,11 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, NSFetche
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-            guard let photoAlbumViewController = segue.destination as? PhotoAlbumViewController else { return }
-
-            let pinAnnotation: AnnotationPinView = sender as! AnnotationPinView
-
-            photoAlbumViewController.pin = pinAnnotation.pin
+        guard let photoAlbumViewController = segue.destination as? PhotoAlbumViewController else { return }
+        
+        let pinAnnotation: AnnotationPinView = sender as! AnnotationPinView
+        
+        photoAlbumViewController.pin = pinAnnotation.pin
         
     }
     

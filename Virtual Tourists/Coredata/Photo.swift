@@ -9,8 +9,8 @@ import Foundation
 import CoreData
 import UIKit
 
- class Photo: NSManagedObject {
-
+class Photo: NSManagedObject {
+    
     override func awakeFromInsert() {
         super.awakeFromInsert()
         creationDate = Date()
