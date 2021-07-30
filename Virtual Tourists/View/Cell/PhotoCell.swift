@@ -19,10 +19,23 @@ class PhotoCell: UICollectionViewCell {
     var id: UUID? = nil
     var photo: Photo!
     
+    func downloadImage(_ photo: Photo) {
+            
+            URLSession.shared.dataTask(with: URL(string: photo.imageURL!)!) { (data, response, error) in
+                
+                if error == nil {
+                    DispatchQueue.main.async {
+                        self.imageView.image = UIImage(data: data! as Data)
+                        self.saveImageDataToCoreData(photo, imageData: data! as Data)
+                    }
+                }
+            }
+            .resume()
+        }
+    
     func initWithPhoto(_ photo: Photo) {
         
         if photo.imageData != nil {
-            
             DispatchQueue.main.async {
                 self.imageView.image = UIImage(data: photo.imageData! as Data)
             }
@@ -31,19 +44,6 @@ class PhotoCell: UICollectionViewCell {
         }
     }
     
-    func downloadImage(_ photo: Photo) {
-        
-        URLSession.shared.dataTask(with: URL(string: photo.imageURL!)!) { (data, response, error) in
-            
-            if error == nil {
-                DispatchQueue.main.async {
-                    self.imageView.image = UIImage(data: data! as Data)
-                    self.saveImageDataToCoreData(photo, imageData: data! as Data)
-                }
-            }
-        }
-        .resume()
-    }
     
     func saveImageDataToCoreData(_ photo: Photo, imageData: Data) {
         
@@ -54,6 +54,9 @@ class PhotoCell: UICollectionViewCell {
             print("failed to save photo")
         }
     }
+    
+   
+    
 }
 
 

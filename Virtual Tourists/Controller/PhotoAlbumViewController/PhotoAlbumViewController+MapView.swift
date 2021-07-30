@@ -12,8 +12,8 @@ import MapKit
 extension PhotoAlbumViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        if annotation is MKUserLocation { return nil }
         
+        if annotation is MKUserLocation { return nil }
         let reuseId = "pinView"
         var pinView: MKPinAnnotationView
         
@@ -26,20 +26,20 @@ extension PhotoAlbumViewController: MKMapViewDelegate {
         pinView.canShowCallout = true
         pinView.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
         pinView.annotation = annotation
+        
         return pinView
     }
     
-    func setCenter() {
-        if let latitude = currentLatitude,
-            let longitude = currentLongitude {
-        let center: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            mapView.setCenter(center, animated: true)
-            let mySpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        func setMapCenter() {
+            let defaults = UserDefaults.standard
+                defaults.set(37.7749, forKey: "Lat")
+                defaults.set(-122.4194, forKey: "Lon")
+            let center = CLLocationCoordinate2DMake(defaults.double(forKey: "Lat"), defaults.double(forKey: "Lon"))
+                mapView.setCenter(center, animated: true)
+            let mySpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
             let myRegion: MKCoordinateRegion = MKCoordinateRegion(center: center, span: mySpan)
-            mapView.setRegion(myRegion, animated: true)
-            let annotation: MKPointAnnotation = MKPointAnnotation()
-            annotation.coordinate = center
-            mapView.addAnnotation(annotation)
+                mapView.region = myRegion
         }
+        
     }
-}
+

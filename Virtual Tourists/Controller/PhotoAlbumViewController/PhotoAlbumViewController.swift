@@ -10,50 +10,32 @@ import UIKit
 import MapKit
 import CoreData
 
-class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDelegate {
+class PhotoAlbumViewController: UIViewController {
+    
+    public static let reuseId = "photoCell"
+    
+    var pin: Pin? = nil
+    var dataController: DataController!
+    var fetchedResultsController: NSFetchedResultsController<Photo>!
+    var currentLatitude = 0.0
+    var currentLongitude = 0.0
+    let numberOfColumns: CGFloat = 3
+    var savedPhotoObjects = [Photo]()
+    var flickrPhotos: [FlickrPhoto] = []
+    let numbersOfColumns: CGFloat = 3
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var newCollectionsButton: UIButton!
-    
-    
-    var pin: Pin!
-    var currentLatitude: Double?
-    var currentLongitude: Double?
-    var savedPhotoObjects = [Photo]()
-    var flickrPhotos: [FlickrPhoto] = []
-    let numberOfColumns: CGFloat = 3
-    var fetchedResultsController: NSFetchedResultsController<Photo>!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        mapView.delegate = self
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        
-        let savedPhotos = reloadSavedData()
-        if savedPhotos != nil && savedPhotos?.count != 0 {savedPhotoObjects = savedPhotos!
-            showSavedResult()
-        } else {
-            showNewResult()
-        }
-        setCenter()
-        
-        activityIndicator.startAnimating()
-    }
-    
     
     fileprivate func reloadSavedData() -> [Photo]? {
         var photoArray: [Photo] = []
         let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
         let predicate = NSPredicate(format: "pin == %@", argumentArray: [pin!])
         fetchRequest.predicate = predicate
-        let sortDescriptor = NSSortDescriptor(key: "imageURL", ascending: true)
+        let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
-        
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: DataController.shared.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
@@ -73,13 +55,45 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         }
     }
     
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        mapView.delegate = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        let savedPhotos = reloadSavedData()
+        if savedPhotos != nil && savedPhotos?.count != 0 {
+            savedPhotoObjects = savedPhotos!
+            showSavedResult()
+        } else {
+            showNewResult()
+        }
+        setMapCenter()
+        activityIndicator.startAnimating()
+    }
+    
+    
+    func checkForPicutres() -> Bool {
+        if let photosFetched = fetchedResultsController.fetchedObjects {
+            if !photosFetched.isEmpty {
+                
+                return true
+            }
+        }
+        return false
+    }
+    
+    
     fileprivate func getFlickrPhotoURL() {
-        FlickrClient.shared.getFlickrPhotoURL(lat: currentLatitude!, lon: currentLongitude!, page: 1) { (photos, error) in
+        FlickrClient.shared.getFlickrPhotoURL(lat: currentLatitude, lon: currentLongitude, page: 1) { (photos, error) in
             
             if let error = error {
                 DispatchQueue.main.async {
                     
-                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.startAnimating()
                     
                     let alertVC = UIAlertController(title: "Error", message: "Error retrieving data", preferredStyle: .alert)
                     alertVC.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
@@ -88,16 +102,42 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
                 }
             } else {
                 if let photos = photos { DispatchQueue.main.async {
+                    self.flickrPhotos = photos
+                    self.saveToCoreData(photos: photos)
+                    self.activityIndicator.stopAnimating()
+                    self.collectionView.reloadData()
+                    self.showSavedResult()
+                }
+                }
+            }
+        }
+    }
+    
+    fileprivate func getRandomFlickrImages() {
+        let random = Int.random(in: 2...4)
+        FlickrClient.shared.getFlickrPhotoURL(lat: currentLatitude, lon: currentLongitude, page: random, completion: { (photos, error) in
+            
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    let alertVC = UIAlertController(title: "Error", message: "Error retrieving data", preferredStyle: .alert)
+                    alertVC.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+                    self.present(alertVC, animated: true)
+                    print(error.localizedDescription)
+                }
+            } else {
+                if let photos = photos {
+                    
+                    DispatchQueue.main.async {
                         self.flickrPhotos = photos
                         self.saveToCoreData(photos: photos)
                         self.activityIndicator.stopAnimating()
-                        self.collectionView.reloadData()
                         self.savedPhotoObjects = self.reloadSavedData()!
                         self.showSavedResult()
                     }
                 }
             }
-        }
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -133,36 +173,10 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         
         deleteExistingCoreDataPhoto()
         savedPhotoObjects.removeAll()
-        
         getFlickrPhotoURL()
     }
     
-    fileprivate func getRandomFlickrImages() {
-        let random = Int.random(in: 2...4)
-        FlickrClient.shared.getFlickrPhotoURL(lat: currentLatitude!, lon: currentLongitude!, page: random, completion: { (photos, error) in
-            
-            if let error = error {
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    let alertVC = UIAlertController(title: "Error", message: "Error retrieving data", preferredStyle: .alert)
-                    alertVC.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
-                    self.present(alertVC, animated: true)
-                    print(error.localizedDescription)
-                }
-            } else {
-                if let photos = photos {
-                    
-                    DispatchQueue.main.async {
-                        self.flickrPhotos = photos
-                        self.saveToCoreData(photos: photos)
-                        self.activityIndicator.stopAnimating()
-                        self.savedPhotoObjects = self.reloadSavedData()!
-                        self.showSavedResult()
-                    }
-                }
-            }
-        })
-    }
+    
     
     @IBAction func newCollectionsButton(_ sender: Any) {
         
@@ -170,9 +184,10 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         deleteExistingCoreDataPhoto()
         getRandomFlickrImages()
         activityIndicator.stopAnimating()
+        
     }
-    
 }
+
 
 
 

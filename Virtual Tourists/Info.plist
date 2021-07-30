@@ -46,7 +46,7 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>allow users specify travel locations around the world</string>
+	<string>allow app to use current location</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
