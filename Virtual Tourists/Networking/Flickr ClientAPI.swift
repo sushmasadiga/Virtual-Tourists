@@ -18,7 +18,7 @@ class FlickrClient {
     var flickrSearch = "flickr.photos.search"
     
     
-    func getFlickrPhoto(lat: Double, lon: Double, page: Int, completion: @escaping ([FlickrPhoto]?, Error?) -> Void) {
+    func getFlickrPhotoURL(lat: Double, lon: Double, page: Int, completion: @escaping ([FlickrPhoto]?, Error?) -> Void) {
         guard var components = URLComponents(string: flickrBase)
         else {
             completion(nil, NetworkErrors.invalidURL)
@@ -36,22 +36,18 @@ class FlickrClient {
         let queryItem8 = URLQueryItem(name: "page", value: String(page))
         components.queryItems = [queryItem1, queryItem2, queryItem3, queryItem4, queryItem5, queryItem6, queryItem7, queryItem8]
         
-        guard let url = components.url else {
-            completion(nil, NetworkErrors.invalidURL)
+        guard let url = components.url else {completion(nil, NetworkErrors.invalidURL)
             return }
         
         let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
             
-            if let error = error {
-                completion(nil, error)
+            if let error = error {completion(nil, error)
             }
             
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == 200 else {
-                completion(nil, NetworkErrors.httpError)
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == 200 else {completion(nil, NetworkErrors.httpError)
                 return }
             
-            guard let data = data else {
-                completion(nil, NetworkErrors.nilData)
+            guard let data = data else {completion(nil, NetworkErrors.nilData)
                 return }
             
             let decoder = JSONDecoder()
@@ -61,8 +57,7 @@ class FlickrClient {
                 
                 let photos = Array(responseObject.photos.photo.prefix(100))
                 completion(photos, nil)
-            } catch {
-                completion(nil, error)
+            } catch {completion(nil, error)
             }
         }
         task.resume()

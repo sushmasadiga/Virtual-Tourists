@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 import MapKit
 
-class Pin: NSManagedObject {
+ class Pin: NSManagedObject {
     
     var coordinate: CLLocationCoordinate2D {
         get {

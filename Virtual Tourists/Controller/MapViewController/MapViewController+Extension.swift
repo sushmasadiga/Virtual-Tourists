@@ -56,7 +56,7 @@ extension MapViewController: MKMapViewDelegate {
         for pin in annotations {
             if pin.latitude == selectedAnnotation?.coordinate.latitude &&
                 pin.longitude == selectedAnnotation?.coordinate.longitude {
-                mapView.removeAnnotation(selectedAnnotation!)
+               // mapView.removeAnnotation(selectedAnnotation!)
                 DataController.shared.viewContext.delete(pin)
                 DataController.shared.save()
             }
@@ -64,7 +64,7 @@ extension MapViewController: MKMapViewDelegate {
     }
 }
 
-extension MKMapView {
+/*extension MKMapView {
     
     func isInteractionEnabled(_ enabled: Bool) {
         isScrollEnabled = enabled
@@ -77,7 +77,7 @@ extension MKMapView {
     func clearAnnotations(){
         removeAnnotations(annotations)
     }
-}
+}*/
 
 
 

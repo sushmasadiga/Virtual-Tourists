@@ -41,6 +41,7 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
             showNewResult()
         }
         setCenter()
+        
         activityIndicator.startAnimating()
     }
     
@@ -62,7 +63,6 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
             let photoCount = try fetchedResultsController.managedObjectContext.count(for: fetchedResultsController.fetchRequest)
             
             for index in 0..<photoCount {
-                
                 photoArray.append(fetchedResultsController.object(at: IndexPath(row: index, section: 0)))
             }
             return photoArray
@@ -73,8 +73,8 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         }
     }
     
-    fileprivate func getFlickrPhotos() {
-        FlickrClient.shared.getFlickrPhoto(lat: currentLatitude!, lon: currentLongitude!, page: 1) { (photos, error) in
+    fileprivate func getFlickrPhotoURL() {
+        FlickrClient.shared.getFlickrPhotoURL(lat: currentLatitude!, lon: currentLongitude!, page: 1) { (photos, error) in
             
             if let error = error {
                 DispatchQueue.main.async {
@@ -87,10 +87,7 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
                     print(error.localizedDescription)
                 }
             } else {
-                if let photos = photos {
-                    
-                    DispatchQueue.main.async {
-                        
+                if let photos = photos { DispatchQueue.main.async {
                         self.flickrPhotos = photos
                         self.saveToCoreData(photos: photos)
                         self.activityIndicator.stopAnimating()
@@ -102,8 +99,6 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
             }
         }
     }
-    
-   
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -122,14 +117,13 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
     
     
     func deleteExistingCoreDataPhoto() {
-        
-        for image in savedPhotoObjects {
+        for image in savedPhotoObjects
+        {
             DataController.shared.viewContext.delete(image)
         }
     }
     
     func showSavedResult() {
-        
         DispatchQueue.main.async {
             self.collectionView.reloadData()
         }
@@ -140,12 +134,12 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         deleteExistingCoreDataPhoto()
         savedPhotoObjects.removeAll()
         
-        getFlickrPhotos()
+        getFlickrPhotoURL()
     }
     
     fileprivate func getRandomFlickrImages() {
         let random = Int.random(in: 2...4)
-        FlickrClient.shared.getFlickrPhoto(lat: currentLatitude!, lon: currentLongitude!, page: random, completion: { (photos, error) in
+        FlickrClient.shared.getFlickrPhotoURL(lat: currentLatitude!, lon: currentLongitude!, page: random, completion: { (photos, error) in
             
             if let error = error {
                 DispatchQueue.main.async {

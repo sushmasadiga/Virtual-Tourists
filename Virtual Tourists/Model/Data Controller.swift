@@ -11,7 +11,7 @@ import CoreData
 
 class DataController {
     
-    static let shared = DataController(modelName: "VirtualTourists")
+    static let shared = DataController(modelName: "Virtual Tourists")
     let modelName: String
     
     init(modelName:String) {
@@ -31,7 +31,7 @@ class DataController {
             application to it. This property is optional since there are legitimate
             error conditions that could cause the creation of the store to fail.
            */
-           let container = NSPersistentContainer(name: "VirtualTourists")
+           let container = NSPersistentContainer(name: "Virtual Tourists")
            container.loadPersistentStores(completionHandler: { (storeDescription, error) in
                if let error = error as NSError? {
                    // Replace this implementation with code to handle the error appropriately.

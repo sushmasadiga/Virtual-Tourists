@@ -16,8 +16,8 @@ class PhotoCell: UICollectionViewCell {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     public static let reuseId = "photoCell"
-    /*var id: UUID? = nil
-    var photo: Photo!*/
+    var id: UUID? = nil
+    var photo: Photo!
     
     func initWithPhoto(_ photo: Photo) {
         
@@ -51,7 +51,7 @@ class PhotoCell: UICollectionViewCell {
             photo.imageData = imageData
             try DataController.shared.viewContext.save()
         } catch {
-            print("saving photoimage failed")
+            print("failed to save photo")
         }
     }
 }
