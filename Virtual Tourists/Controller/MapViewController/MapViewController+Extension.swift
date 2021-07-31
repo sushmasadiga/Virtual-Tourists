@@ -50,35 +50,19 @@ extension MapViewController: MKMapViewDelegate {
         
         func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
             
+            
             let selectedAnnotation = view.annotation as? MKPointAnnotation
             
             for pin in annotations {
                 if pin.latitude == selectedAnnotation?.coordinate.latitude &&
                     pin.longitude == selectedAnnotation?.coordinate.longitude {
-                   // mapView.removeAnnotation(selectedAnnotation!)
+                   
                     DataController.shared.viewContext.delete(pin)
                     DataController.shared.save()
                 }
             }
         }
-    
 }
-    
-    /*override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let photoVC = segue.destination as? PhotoAlbumViewController {
-            if let pins = fetchedResultsController.fetchedObjects {
-                let annotation = mapView.selectedAnnotations[0]
-                guard let indexPath = pins.firstIndex(where: { (pin) -> Bool in
-                    pin.latitude == annotation.coordinate.latitude && pin.longitude == annotation.coordinate.longitude
-                }) else {
-                    return
-                }
-                photoVC.dataController = dataController
-                photoVC.pin = pins[indexPath]
-            }
-        }
-    }*/
-
 
 
 extension MapViewController: NSFetchedResultsControllerDelegate {
@@ -112,6 +96,6 @@ extension MKMapView {
         removeAnnotations(annotations)
     }
 }
-
-
-
+ 
+ 
+ 

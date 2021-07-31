@@ -12,50 +12,47 @@ import CoreData
 
 class PhotoAlbumViewController: UIViewController {
     
-    public static let reuseId = "photoCell"
+    private let reuseId = "photoCell"
     
     var pin: Pin? = nil
     var dataController: DataController!
     var fetchedResultsController: NSFetchedResultsController<Photo>!
     var currentLatitude = 0.0
     var currentLongitude = 0.0
+    var collectionViewCells: [PhotoCell] = []
     let numberOfColumns: CGFloat = 3
     var savedPhotoObjects = [Photo]()
     var flickrPhotos: [FlickrPhoto] = []
     let numbersOfColumns: CGFloat = 3
+    
+    let managedObjectContext =
+        (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var newCollectionsButton: UIButton!
     
-    fileprivate func reloadSavedData() -> [Photo]? {
-        var photoArray: [Photo] = []
-        let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
-        let predicate = NSPredicate(format: "pin == %@", argumentArray: [pin!])
-        fetchRequest.predicate = predicate
-        let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
+    
+    func setupFetchedResultsController() {
         
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: DataController.shared.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        fetchedResultsController.delegate = self
+        guard let pin = pin else {
+            fatalError("setupPhotos: pin is nil")
+        }
+        
+        let fetchRequest: NSFetchRequest = Photo.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "pin == %@", pin)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+        
+        self.fetchedResultsController = .init(fetchRequest: fetchRequest,managedObjectContext: managedObjectContext,sectionNameKeyPath: nil,cacheName: nil)
         
         do {
-            try fetchedResultsController.performFetch()
-            let photoCount = try fetchedResultsController.managedObjectContext.count(for: fetchedResultsController.fetchRequest)
-            
-            for index in 0..<photoCount {
-                photoArray.append(fetchedResultsController.object(at: IndexPath(row: index, section: 0)))
-            }
-            return photoArray
+            try fetchedResultsController!.performFetch()
             
         } catch {
             print("error performing fetch")
-            return nil
         }
     }
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,29 +60,77 @@ class PhotoAlbumViewController: UIViewController {
         mapView.delegate = self
         collectionView.delegate = self
         collectionView.dataSource = self
-        
-        let savedPhotos = reloadSavedData()
-        if savedPhotos != nil && savedPhotos?.count != 0 {
-            savedPhotoObjects = savedPhotos!
-            showSavedResult()
-        } else {
-            showNewResult()
-        }
         setMapCenter()
-        activityIndicator.startAnimating()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        saveContext()
     }
     
     
-    func checkForPicutres() -> Bool {
-        if let photosFetched = fetchedResultsController.fetchedObjects {
-            if !photosFetched.isEmpty {
-                
-                return true
+    var downloadingImages = false {
+        didSet {
+            DispatchQueue.main.async {
+                self.newCollectionsButton.isEnabled = !self.downloadingImages
             }
         }
-        return false
     }
     
+    
+    
+    @IBAction func newCollectionsButton(_ sender: Any) {
+        
+        collectionViewCells = []
+        collectionView.reloadData()
+        
+        deleteExistingCoreDataPhoto()
+        
+        activityIndicator.startAnimating()
+        
+        downloadingImages = true
+        getRandomFlickrImages()
+        
+        activityIndicator.stopAnimating()
+        
+    }
+    
+    func setupPhotos() {
+       
+        self.loadViewIfNeeded()
+        
+        assert(collectionView != nil, "collection view is nil")
+        
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.startAnimating()
+        downloadingImages = true
+        setupFetchedResultsController()
+
+        let coreDataPhotos = fetchedResultsController?.fetchedObjects
+            if let coreDataPhotos = coreDataPhotos, !coreDataPhotos.isEmpty {
+            
+            activityIndicator.stopAnimating()
+            
+                for (indx, photo) in coreDataPhotos.enumerated() {
+
+                guard let uiImage = photo.imageData.map(UIImage.init(data:)) as? UIImage
+                else {
+                    continue
+                }
+                
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell",
+                    for: IndexPath(row: indx, section: 1)) as! PhotoCell
+                
+                cell.configure()
+                cell.imageView.image = uiImage
+                cell.id = photo.id
+                collectionViewCells.append(cell)
+                collectionView.reloadData()
+            }
+            downloadingImages = false
+            return
+        }
+    }
     
     fileprivate func getFlickrPhotoURL() {
         FlickrClient.shared.getFlickrPhotoURL(lat: currentLatitude, lon: currentLongitude, page: 1) { (photos, error) in
@@ -132,12 +177,15 @@ class PhotoAlbumViewController: UIViewController {
                         self.flickrPhotos = photos
                         self.saveToCoreData(photos: photos)
                         self.activityIndicator.stopAnimating()
-                        self.savedPhotoObjects = self.reloadSavedData()!
                         self.showSavedResult()
                     }
                 }
             }
         })
+    }
+    
+     func saveContext() {
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -157,6 +205,7 @@ class PhotoAlbumViewController: UIViewController {
     
     
     func deleteExistingCoreDataPhoto() {
+        
         for image in savedPhotoObjects
         {
             DataController.shared.viewContext.delete(image)
@@ -170,22 +219,11 @@ class PhotoAlbumViewController: UIViewController {
     }
     
     func showNewResult() {
-        
         deleteExistingCoreDataPhoto()
         savedPhotoObjects.removeAll()
         getFlickrPhotoURL()
     }
     
-    
-    
-    @IBAction func newCollectionsButton(_ sender: Any) {
-        
-        activityIndicator.startAnimating()
-        deleteExistingCoreDataPhoto()
-        getRandomFlickrImages()
-        activityIndicator.stopAnimating()
-        
-    }
 }
 
 

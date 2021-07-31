@@ -15,23 +15,15 @@ class PhotoCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    
     public static let reuseId = "photoCell"
     var id: UUID? = nil
-    var photo: Photo!
     
-    func downloadImage(_ photo: Photo) {
-            
-            URLSession.shared.dataTask(with: URL(string: photo.imageURL!)!) { (data, response, error) in
-                
-                if error == nil {
-                    DispatchQueue.main.async {
-                        self.imageView.image = UIImage(data: data! as Data)
-                        self.saveImageDataToCoreData(photo, imageData: data! as Data)
-                    }
-                }
-            }
-            .resume()
-        }
+    func configure() {
+        self.imageView.image = nil
+        self.imageView.contentMode = .scaleAspectFill
+        self.activityIndicator.hidesWhenStopped = true
+    }
     
     func initWithPhoto(_ photo: Photo) {
         
@@ -43,8 +35,21 @@ class PhotoCell: UICollectionViewCell {
             downloadImage(photo)
         }
     }
-    
-    
+  
+    func downloadImage(_ photo: Photo) {
+        
+        URLSession.shared.dataTask(with: URL(string: photo.imageURL!)!) { (data, response, error) in
+            
+            if error == nil {
+                DispatchQueue.main.async {
+                    self.imageView.image = UIImage(data: data! as Data)
+                    self.saveImageDataToCoreData(photo, imageData: data! as Data)
+                }
+            }
+        }
+        .resume()
+    }
+  
     func saveImageDataToCoreData(_ photo: Photo, imageData: Data) {
         
         do {
@@ -55,8 +60,5 @@ class PhotoCell: UICollectionViewCell {
         }
     }
     
-   
-    
 }
-
 

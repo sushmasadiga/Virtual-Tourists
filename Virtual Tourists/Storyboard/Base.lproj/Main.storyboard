@@ -35,6 +35,9 @@
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="IzS-bk-1jT">
                                 <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <connections>
+                                    <outlet property="delegate" destination="m9T-dX-juu" id="Xxe-3Z-tGd"/>
+                                </connections>
                             </mapView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="3T2-Vo-njB"/>
@@ -79,10 +82,6 @@
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
-                                <activityIndicatorView key="backgroundView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" id="xwa-TX-8iN">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="486"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </activityIndicatorView>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="photoCell" id="IU2-qM-yOO" customClass="PhotoCell" customModule="Virtual_Tourists" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="128" height="120"/>
@@ -130,17 +129,25 @@
                                     <action selector="newCollectionsButton:" destination="Ilv-r9-Cph" eventType="touchUpInside" id="Cgq-U1-Har"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" style="medium" id="xwa-TX-8iN">
+                                <rect key="frame" x="0.0" y="205" width="414" height="486"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="IDb-2d-V4o"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="IDb-2d-V4o" firstAttribute="trailing" secondItem="HSU-iy-Xjg" secondAttribute="trailing" id="5Sn-De-RkL"/>
+                            <constraint firstItem="xwa-TX-8iN" firstAttribute="height" secondItem="HSU-iy-Xjg" secondAttribute="height" id="D63-QK-SvY"/>
                             <constraint firstItem="IDb-2d-V4o" firstAttribute="bottom" secondItem="HSU-iy-Xjg" secondAttribute="bottom" id="FuX-bd-ega"/>
                             <constraint firstItem="IDb-2d-V4o" firstAttribute="bottom" secondItem="HSU-iy-Xjg" secondAttribute="bottom" id="LTc-m6-A5G"/>
                             <constraint firstItem="HSU-iy-Xjg" firstAttribute="top" secondItem="IDb-2d-V4o" secondAttribute="top" constant="288" id="MIg-Na-KEA"/>
                             <constraint firstItem="LBR-XU-Mlq" firstAttribute="leading" secondItem="IDb-2d-V4o" secondAttribute="leading" constant="109" id="ZtA-kw-5jG"/>
                             <constraint firstItem="HSU-iy-Xjg" firstAttribute="leading" secondItem="IDb-2d-V4o" secondAttribute="leading" id="abd-5Z-E03"/>
+                            <constraint firstItem="xwa-TX-8iN" firstAttribute="width" secondItem="HSU-iy-Xjg" secondAttribute="width" id="bre-eU-hTl"/>
                             <constraint firstItem="HSU-iy-Xjg" firstAttribute="top" secondItem="IDb-2d-V4o" secondAttribute="top" constant="288" id="kOK-qA-LNk"/>
+                            <constraint firstItem="xwa-TX-8iN" firstAttribute="centerY" secondItem="HSU-iy-Xjg" secondAttribute="centerY" id="m2d-ws-aoI"/>
+                            <constraint firstItem="xwa-TX-8iN" firstAttribute="centerX" secondItem="HSU-iy-Xjg" secondAttribute="centerX" id="mPz-oq-eXN"/>
                             <constraint firstItem="IDb-2d-V4o" firstAttribute="bottom" secondItem="LBR-XU-Mlq" secondAttribute="bottom" constant="59" id="v0A-1T-gOD"/>
                             <constraint firstItem="IDb-2d-V4o" firstAttribute="trailing" secondItem="LBR-XU-Mlq" secondAttribute="trailing" constant="95" id="wMz-RW-PkH"/>
                         </constraints>

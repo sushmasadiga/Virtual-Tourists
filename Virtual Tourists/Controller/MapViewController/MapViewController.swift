@@ -13,37 +13,59 @@ import CoreLocation
 
 class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocationManagerDelegate {
     
-    var Pins: [Pin] = []
+    var mapPins: [Pin] = []
+    
     fileprivate let locationManager: CLLocationManager = CLLocationManager()
-    let manager = CLLocationManager()
+    
     var dataController: DataController!
     var fetchedResultsController: NSFetchedResultsController<Pin>!
     var annotations = [Pin]()
-    var savedPins = [MKPointAnnotation]()
-    var latitude = 0.0
-    var longitude = 0.0
+    let managedObjectContext =
+        (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     @IBOutlet weak var mapView: MKMapView!
     
-    
-    
-    fileprivate func setUpFetchedResultsController() {
-        let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: false)
-        fetchRequest.sortDescriptors = [sortDescriptor]
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        if let result = try? DataController.shared.viewContext.fetch(fetchRequest) {annotations = result
-            for annotation in annotations {
-                let savePin = MKPointAnnotation()
-                if let lat = CLLocationDegrees(exactly: annotation.latitude), let lon = CLLocationDegrees(exactly: annotation.longitude) {
-                    let coordinateLocation = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-                    savePin.coordinate = coordinateLocation
-                    savePin.title = "Photos"
-                    savedPins.append(savePin)
-                }
+        mapView.delegate = self
+        setCenter()
+        
+        let longPress: UILongPressGestureRecognizer = UILongPressGestureRecognizer()
+        longPress.addTarget(self, action: #selector(recognizeLongPress(_ :)))
+        mapView.addGestureRecognizer(longPress)
+        longPress.minimumPressDuration = 0.3
+    }
+    
+    
+    func addPins() {
+        
+        let fetchRequest: NSFetchRequest = Pin.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                                  managedObjectContext: managedObjectContext,sectionNameKeyPath: nil,cacheName: nil)
+        do {
+            try fetchedResultsController.performFetch()
+            guard let pins = fetchedResultsController.fetchedObjects else {
+                print("no pins found")
+                return
             }
-            mapView.addAnnotations(savedPins)
+            self.mapPins = pins
+            
+            for pin in pins {
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = pin.coordinate
+                mapView.addAnnotation(annotation)
+            }
+        } catch {
+            return
         }
+    }
+    
+    
+    func saveContext() {
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
     
     
@@ -58,22 +80,9 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
         mapView.region = myRegion
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        mapView.delegate = self
-        
-        let longPress: UILongPressGestureRecognizer = UILongPressGestureRecognizer()
-            longPress.addTarget(self, action: #selector(recognizeLongPress(_ :)))
-            mapView.addGestureRecognizer(longPress)
-            longPress.minimumPressDuration = 0.3
-        
-        setCenter()
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setUpFetchedResultsController()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -82,21 +91,21 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
     }
     
     @objc private func recognizeLongPress(_ sender: UILongPressGestureRecognizer) {
-           guard sender.state == UIGestureRecognizer.State.began else {
-               return
-           }
-           let location = sender.location(in: mapView)
-           let myCoordinate: CLLocationCoordinate2D = mapView.convert(location, toCoordinateFrom: mapView)
-           let myPin: MKPointAnnotation = MKPointAnnotation()
-               myPin.coordinate = myCoordinate
-               myPin.title = "Photos"
-               mapView.addAnnotation(myPin)
-           let pin = Pin(context: DataController.shared.viewContext)
-               pin.latitude = Double(myCoordinate.latitude)
-               pin.longitude = Double(myCoordinate.longitude)
-               annotations.append(pin)
-           DataController.shared.save()
-       }
+        guard sender.state == UIGestureRecognizer.State.began else {
+            return
+        }
+        let location = sender.location(in: mapView)
+        let myCoordinate: CLLocationCoordinate2D = mapView.convert(location, toCoordinateFrom: mapView)
+        let myPin: MKPointAnnotation = MKPointAnnotation()
+        myPin.coordinate = myCoordinate
+        myPin.title = "Photos"
+        mapView.addAnnotation(myPin)
+        let pin = Pin(context: managedObjectContext)
+        pin.coordinate = myCoordinate
+        mapPins.append(pin)
+        saveContext()
+        DataController.shared.save()
+    }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
