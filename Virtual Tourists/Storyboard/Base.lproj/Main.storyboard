@@ -54,7 +54,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="mapView" destination="IzS-bk-1jT" id="KBg-em-b1x"/>
-                        <segue destination="Ilv-r9-Cph" kind="show" identifier="showPhoto" id="QdQ-Q1-Una"/>
+                        <segue destination="Ilv-r9-Cph" kind="presentation" identifier="showPhoto" id="fWX-q6-Mse"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iN3-Aj-Pio" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -66,7 +66,7 @@
             <objects>
                 <viewController storyboardIdentifier="PhotoAlbumViewController" id="Ilv-r9-Cph" customClass="PhotoAlbumViewController" customModule="Virtual_Tourists" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1l8-eA-SV3">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="UK1-Eg-of5">
@@ -74,7 +74,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="HSU-iy-Xjg">
-                                <rect key="frame" x="0.0" y="376" width="414" height="486"/>
+                                <rect key="frame" x="0.0" y="288" width="414" height="544"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="dd9-la-L6i">
                                     <size key="itemSize" width="128" height="128"/>
@@ -97,21 +97,21 @@
                                                         <constraint firstAttribute="width" constant="128" id="vHz-A9-KrR"/>
                                                     </constraints>
                                                 </imageView>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="MHa-ly-E9F">
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="SxT-dw-Ub6">
                                                     <rect key="frame" x="54" y="50" width="20" height="20"/>
                                                 </activityIndicatorView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="MHa-ly-E9F" firstAttribute="centerX" secondItem="2L9-VV-Vhk" secondAttribute="centerX" id="C1Z-hb-04R"/>
                                                 <constraint firstAttribute="trailing" secondItem="Tnq-tC-omm" secondAttribute="trailing" id="C4S-ix-lna"/>
+                                                <constraint firstItem="SxT-dw-Ub6" firstAttribute="centerY" secondItem="2L9-VV-Vhk" secondAttribute="centerY" id="OW9-m3-9Ob"/>
                                                 <constraint firstItem="Tnq-tC-omm" firstAttribute="top" secondItem="2L9-VV-Vhk" secondAttribute="top" id="RwU-70-C3S"/>
-                                                <constraint firstItem="MHa-ly-E9F" firstAttribute="centerY" secondItem="2L9-VV-Vhk" secondAttribute="centerY" id="boE-Ld-yXq"/>
+                                                <constraint firstItem="SxT-dw-Ub6" firstAttribute="centerX" secondItem="2L9-VV-Vhk" secondAttribute="centerX" id="jqZ-i7-QSo"/>
                                                 <constraint firstAttribute="bottom" secondItem="Tnq-tC-omm" secondAttribute="bottom" id="v1U-ze-adC"/>
                                                 <constraint firstItem="Tnq-tC-omm" firstAttribute="leading" secondItem="2L9-VV-Vhk" secondAttribute="leading" id="xJD-2c-zE8"/>
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <connections>
-                                            <outlet property="activityIndicator" destination="MHa-ly-E9F" id="oWw-k6-oqj"/>
+                                            <outlet property="activityIndicator" destination="SxT-dw-Ub6" id="Nwa-jx-KcC"/>
                                             <outlet property="imageView" destination="Tnq-tC-omm" id="tta-9X-vKa"/>
                                         </connections>
                                     </collectionViewCell>
@@ -122,14 +122,16 @@
                                 </connections>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LBR-XU-Mlq">
-                                <rect key="frame" x="109" y="768" width="210" height="35"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                                <state key="normal" title="New Collections"/>
+                                <rect key="frame" x="109" y="737" width="210" height="36"/>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                <state key="normal" title="New Collections">
+                                    <color key="titleColor" systemColor="linkColor"/>
+                                </state>
                                 <connections>
                                     <action selector="newCollectionsButton:" destination="Ilv-r9-Cph" eventType="touchUpInside" id="Cgq-U1-Har"/>
                                 </connections>
                             </button>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" style="medium" id="xwa-TX-8iN">
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" id="xwa-TX-8iN">
                                 <rect key="frame" x="0.0" y="205" width="414" height="486"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
@@ -140,8 +142,12 @@
                             <constraint firstItem="IDb-2d-V4o" firstAttribute="trailing" secondItem="HSU-iy-Xjg" secondAttribute="trailing" id="5Sn-De-RkL"/>
                             <constraint firstItem="xwa-TX-8iN" firstAttribute="height" secondItem="HSU-iy-Xjg" secondAttribute="height" id="D63-QK-SvY"/>
                             <constraint firstItem="IDb-2d-V4o" firstAttribute="bottom" secondItem="HSU-iy-Xjg" secondAttribute="bottom" id="FuX-bd-ega"/>
+                            <constraint firstItem="LBR-XU-Mlq" firstAttribute="width" secondItem="1l8-eA-SV3" secondAttribute="width" multiplier="0.507246" id="I68-xR-Xqn"/>
                             <constraint firstItem="IDb-2d-V4o" firstAttribute="bottom" secondItem="HSU-iy-Xjg" secondAttribute="bottom" id="LTc-m6-A5G"/>
                             <constraint firstItem="HSU-iy-Xjg" firstAttribute="top" secondItem="IDb-2d-V4o" secondAttribute="top" constant="288" id="MIg-Na-KEA"/>
+                            <constraint firstItem="HSU-iy-Xjg" firstAttribute="height" secondItem="1l8-eA-SV3" secondAttribute="height" multiplier="0.577197" id="PJH-cE-V7A"/>
+                            <constraint firstItem="LBR-XU-Mlq" firstAttribute="height" secondItem="1l8-eA-SV3" secondAttribute="height" multiplier="0.0415677" id="VAO-4s-abe"/>
+                            <constraint firstItem="HSU-iy-Xjg" firstAttribute="width" secondItem="1l8-eA-SV3" secondAttribute="width" id="Vnc-to-jnN"/>
                             <constraint firstItem="LBR-XU-Mlq" firstAttribute="leading" secondItem="IDb-2d-V4o" secondAttribute="leading" constant="109" id="ZtA-kw-5jG"/>
                             <constraint firstItem="HSU-iy-Xjg" firstAttribute="leading" secondItem="IDb-2d-V4o" secondAttribute="leading" id="abd-5Z-E03"/>
                             <constraint firstItem="xwa-TX-8iN" firstAttribute="width" secondItem="HSU-iy-Xjg" secondAttribute="width" id="bre-eU-hTl"/>
@@ -156,6 +162,7 @@
                     <connections>
                         <outlet property="activityIndicator" destination="xwa-TX-8iN" id="2Po-En-ElU"/>
                         <outlet property="collectionView" destination="HSU-iy-Xjg" id="V0c-5S-jC7"/>
+                        <outlet property="flowLayout" destination="dd9-la-L6i" id="pKc-I0-fES"/>
                         <outlet property="mapView" destination="UK1-Eg-of5" id="bqs-Nm-bo2"/>
                         <outlet property="newCollectionsButton" destination="LBR-XU-Mlq" id="9bT-bt-vig"/>
                     </connections>
@@ -167,6 +174,9 @@
     </scenes>
     <resources>
         <image name="VirtualTourist_120" width="120" height="120"/>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

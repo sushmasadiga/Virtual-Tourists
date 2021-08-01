@@ -24,7 +24,6 @@ class DataController {
         return persistentContainer.viewContext
     }()
     
-    // MARK: - Core Data stack
     
     lazy var persistentContainer: NSPersistentContainer = {
         
@@ -38,6 +37,7 @@ class DataController {
         return container
     }()
     
+    
     func configureContexts() {
         backgroundContext = persistentContainer.newBackgroundContext()
         
@@ -48,7 +48,7 @@ class DataController {
         viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
     }
     
-    // MARK: - Core Data Saving support
+    
     func load(completion: (() -> Void)? = nil) {
         persistentContainer.loadPersistentStores { storeDescription, error in
             guard error == nil else {

@@ -30,16 +30,16 @@ extension PhotoAlbumViewController: MKMapViewDelegate {
         return pinView
     }
     
-        func setMapCenter() {
-            let defaults = UserDefaults.standard
-                defaults.set(37.7749, forKey: "Lat")
-                defaults.set(-122.4194, forKey: "Lon")
-            let center = CLLocationCoordinate2DMake(defaults.double(forKey: "Lat"), defaults.double(forKey: "Lon"))
-                mapView.setCenter(center, animated: true)
-            let mySpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
-            let myRegion: MKCoordinateRegion = MKCoordinateRegion(center: center, span: mySpan)
-                mapView.region = myRegion
-        }
-        
+    func setMapCenter() {
+        let defaults = UserDefaults.standard
+        defaults.set(37.7749, forKey: "Lat")
+        defaults.set(-122.4194, forKey: "Lon")
+        let center = CLLocationCoordinate2DMake(defaults.double(forKey: "Lat"), defaults.double(forKey: "Lon"))
+        mapView.setCenter(center, animated: true)
+        let mySpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
+        let myRegion: MKCoordinateRegion = MKCoordinateRegion(center: center, span: mySpan)
+        mapView.region = myRegion
     }
+    
+}
 

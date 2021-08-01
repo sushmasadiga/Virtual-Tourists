@@ -5,9 +5,9 @@
 //  Created by Sushma Adiga on 27/07/21.
 //
 
-import Foundation
+//import Foundation
 import UIKit
-import CoreData
+//import CoreData
 
 class PhotoCell: UICollectionViewCell {
     
@@ -15,12 +15,11 @@ class PhotoCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    
-    public static let reuseId = "photoCell"
     var id: UUID? = nil
+    var photo: Photo!
     
     func configure() {
-        self.imageView.image = nil
+        self.imageView.image = UIImage()
         self.imageView.contentMode = .scaleAspectFill
         self.activityIndicator.hidesWhenStopped = true
     }
@@ -35,7 +34,7 @@ class PhotoCell: UICollectionViewCell {
             downloadImage(photo)
         }
     }
-  
+    
     func downloadImage(_ photo: Photo) {
         
         URLSession.shared.dataTask(with: URL(string: photo.imageURL!)!) { (data, response, error) in
@@ -49,7 +48,7 @@ class PhotoCell: UICollectionViewCell {
         }
         .resume()
     }
-  
+    
     func saveImageDataToCoreData(_ photo: Photo, imageData: Data) {
         
         do {

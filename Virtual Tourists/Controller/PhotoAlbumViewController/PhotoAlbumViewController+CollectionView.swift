@@ -26,6 +26,7 @@ extension PhotoAlbumViewController : UICollectionViewDataSource, UICollectionVie
         
         activityIndicator.stopAnimating()
         cell.initWithPhoto(photoObject)
+        self.newCollectionsButton.isEnabled = true
         
         return cell
     }
@@ -55,7 +56,6 @@ extension PhotoAlbumViewController : UICollectionViewDataSource, UICollectionVie
             cell?.layer.borderWidth = 3
         }
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         

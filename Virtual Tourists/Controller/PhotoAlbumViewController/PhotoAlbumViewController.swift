@@ -10,28 +10,30 @@ import UIKit
 import MapKit
 import CoreData
 
-class PhotoAlbumViewController: UIViewController {
+class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     
-    private let reuseId = "photoCell"
+    public static let reuseId = "photoCell"
     
     var pin: Pin? = nil
     var dataController: DataController!
-    var fetchedResultsController: NSFetchedResultsController<Photo>!
+    var fetchedResultsController: NSFetchedResultsController<Photo>? = nil
     var currentLatitude = 0.0
     var currentLongitude = 0.0
     var collectionViewCells: [PhotoCell] = []
     let numberOfColumns: CGFloat = 3
     var savedPhotoObjects = [Photo]()
     var flickrPhotos: [FlickrPhoto] = []
-    let numbersOfColumns: CGFloat = 3
+    
     
     let managedObjectContext =
         (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var newCollectionsButton: UIButton!
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     
     
     func setupFetchedResultsController() {
@@ -60,14 +62,13 @@ class PhotoAlbumViewController: UIViewController {
         mapView.delegate = self
         collectionView.delegate = self
         collectionView.dataSource = self
-        setMapCenter()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
         
-        saveContext()
+        setMapCenter()
+        downloadingImages = true
+        getRandomFlickrImages()
+        
+        activityIndicator.startAnimating()
     }
-    
     
     var downloadingImages = false {
         didSet {
@@ -77,50 +78,30 @@ class PhotoAlbumViewController: UIViewController {
         }
     }
     
-    
-    
-    @IBAction func newCollectionsButton(_ sender: Any) {
-        
-        collectionViewCells = []
-        collectionView.reloadData()
-        
-        deleteExistingCoreDataPhoto()
-        
-        activityIndicator.startAnimating()
-        
-        downloadingImages = true
-        getRandomFlickrImages()
-        
-        activityIndicator.stopAnimating()
-        
-    }
-    
     func setupPhotos() {
-       
-        self.loadViewIfNeeded()
         
         assert(collectionView != nil, "collection view is nil")
         
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
+        
         downloadingImages = true
         setupFetchedResultsController()
-
+        
         let coreDataPhotos = fetchedResultsController?.fetchedObjects
-            if let coreDataPhotos = coreDataPhotos, !coreDataPhotos.isEmpty {
+        if let coreDataPhotos = coreDataPhotos, !coreDataPhotos.isEmpty {
             
             activityIndicator.stopAnimating()
             
-                for (indx, photo) in coreDataPhotos.enumerated() {
-
+            for (indx, photo) in coreDataPhotos.enumerated() {
+                
                 guard let uiImage = photo.imageData.map(UIImage.init(data:)) as? UIImage
                 else {
                     continue
                 }
                 
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell",
-                    for: IndexPath(row: indx, section: 1)) as! PhotoCell
-                
+                                                              for: IndexPath(row: indx, section: 1)) as! PhotoCell
                 cell.configure()
                 cell.imageView.image = uiImage
                 cell.id = photo.id
@@ -131,6 +112,20 @@ class PhotoAlbumViewController: UIViewController {
             return
         }
     }
+    
+    
+    @IBAction func newCollectionsButton(_ sender: Any) {
+        
+        collectionViewCells = []
+        collectionView.reloadData()
+        
+        activityIndicator.startAnimating()
+        
+        downloadingImages = true
+        savedPhotoObjects.removeAll()
+        getFlickrPhotoURL()
+    }
+    
     
     fileprivate func getFlickrPhotoURL() {
         FlickrClient.shared.getFlickrPhotoURL(lat: currentLatitude, lon: currentLongitude, page: 1) { (photos, error) in
@@ -164,7 +159,7 @@ class PhotoAlbumViewController: UIViewController {
             
             if let error = error {
                 DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.startAnimating()
                     let alertVC = UIAlertController(title: "Error", message: "Error retrieving data", preferredStyle: .alert)
                     alertVC.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
                     self.present(alertVC, animated: true)
@@ -184,12 +179,16 @@ class PhotoAlbumViewController: UIViewController {
         })
     }
     
-     func saveContext() {
+    func saveContext() {
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         super.viewWillAppear(animated)
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.startAnimating()
+        self.collectionView.reloadData()
     }
     
     func saveToCoreData(photos: [FlickrPhoto]) {
@@ -214,14 +213,19 @@ class PhotoAlbumViewController: UIViewController {
     
     func showSavedResult() {
         DispatchQueue.main.async {
+            
             self.collectionView.reloadData()
+            self.activityIndicator.stopAnimating()
+            
         }
     }
     
     func showNewResult() {
+        
         deleteExistingCoreDataPhoto()
         savedPhotoObjects.removeAll()
         getFlickrPhotoURL()
+        
     }
     
 }
