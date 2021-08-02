@@ -11,7 +11,7 @@ import UIKit
 
 extension PhotoAlbumViewController  {
     
-    private func setupPhoto() {
+   func setupPhoto() {
         
         assert(collectionView != nil, "collection view is nil")
         
@@ -42,3 +42,6 @@ extension PhotoAlbumViewController  {
         }
     }
 }
+
+
+

@@ -35,11 +35,16 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
         longPress.addTarget(self, action: #selector(recognizeLongPress(_ :)))
         mapView.addGestureRecognizer(longPress)
         longPress.minimumPressDuration = 0.3
+        addPins()
     }
     
     
+    func saveContext() {
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
+    }
+    
     func addPins() {
-        
+       
         let fetchRequest: NSFetchRequest = Pin.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         
@@ -61,11 +66,6 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
         } catch {
             return
         }
-    }
-    
-    
-    func saveContext() {
-        (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
     
     

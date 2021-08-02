@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct JsonFlickr: Codable {
     let photos: FlickrPhotoResponse

@@ -5,9 +5,8 @@
 //  Created by Sushma Adiga on 27/07/21.
 //
 
-//import Foundation
+
 import UIKit
-//import CoreData
 
 class PhotoCell: UICollectionViewCell {
     

@@ -23,6 +23,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
     let numberOfColumns: CGFloat = 3
     var savedPhotoObjects = [Photo]()
     var flickrPhotos: [FlickrPhoto] = []
+    let managedObjectContext = (UIApplication.shared.delegate as! AppDelegate)
+            .persistentContainer.viewContext
+    
     
     
     @IBOutlet weak var mapView: MKMapView!
@@ -67,13 +70,12 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
         mapView.delegate = self
         setUpCollectionView()
         setMapCenter()
-        getRandomFlickrImages()
+        getFlickrPhotoURL()
         
         activityIndicator.startAnimating()
     }
+ 
     
-    
-
     @IBAction func newCollectionsButton(_ sender: Any) {
         
         collectionViewCells = []
@@ -157,7 +159,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
     
     
     func saveToCoreData(photos: [FlickrPhoto]) {
-        
+       
         for flickrPhoto in photos {
             let photo = Photo(context: DataController.shared.viewContext)
             photo.imageURL = flickrPhoto.imageURLString()

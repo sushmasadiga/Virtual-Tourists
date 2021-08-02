@@ -19,17 +19,16 @@ extension PhotoAlbumViewController : UICollectionViewDataSource, UICollectionVie
         return 1
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
-        let photoObject = savedPhotoObjects[indexPath.row]
-        
-        activityIndicator.stopAnimating()
-        cell.initWithPhoto(photoObject)
-        self.newCollectionsButton.isEnabled = true
-        
-        return cell
-    }
+           let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
+           let photoObject = savedPhotoObjects[indexPath.row]
+           
+           activityIndicator.stopAnimating()
+           cell.initWithPhoto(photoObject)
+           self.newCollectionsButton.isEnabled = true
+           
+           return cell
+       }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width / numberOfColumns
@@ -49,20 +48,18 @@ extension PhotoAlbumViewController : UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         let cell = collectionView.cellForItem(at: indexPath)
         if cell?.isSelected == true {
-            cell?.layer.borderColor = UIColor.blue.cgColor
-            cell?.layer.borderWidth = 3
+            
+       let photo = fetchedResultsController.object(at: indexPath)
+               dataController.viewContext.delete(photo)
+               try? dataController.viewContext.save()
+              
+               DispatchQueue.main.async {
+                          collectionView.deleteItems(at: [indexPath])
+                          collectionView.reloadData()
+               }
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        
-        let cell = collectionView.cellForItem(at: indexPath)
-        cell?.layer.borderColor = UIColor.clear.cgColor
-        cell?.layer.borderWidth = 3
-        cell?.isSelected = false
     }
     
     func setUpCollectionView() {
