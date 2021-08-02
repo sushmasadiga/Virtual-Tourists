@@ -15,16 +15,17 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
     public static let reuseId = "photoCell"
     
     var pin: Pin? = nil
-    var dataController: DataController!
+    var dataController:DataController!
     var fetchedResultsController: NSFetchedResultsController<Photo>!
-    var currentLatitude = 0.0
-    var currentLongitude = 0.0
+
+    var currentLatitude = Double()
+    var currentLongitude = Double()
     var collectionViewCells: [PhotoCell] = []
     let numberOfColumns: CGFloat = 3
     var savedPhotoObjects = [Photo]()
     var flickrPhotos: [FlickrPhoto] = []
     let managedObjectContext = (UIApplication.shared.delegate as! AppDelegate)
-            .persistentContainer.viewContext
+        .persistentContainer.viewContext
     
     
     
@@ -35,20 +36,28 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     
     
+    
     fileprivate func loadSavedData() -> [Photo]? {
         var photoArray: [Photo] = []
-        
+    
+        guard let pin = pin else {
+                    fatalError("pin is nil")
+                }
+
         let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
-        let predicate = NSPredicate(format: "pin == %@", argumentArray: [pin!])
-        fetchRequest.predicate = predicate
+        fetchRequest.predicate =  NSPredicate(format: "pin == %@", pin)
         let sortDescriptor = NSSortDescriptor(key: "imageURL", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
-        
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: DataController.shared.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-                   fetchedResultsController.delegate = self
+
+        self.fetchedResultsController = .init(
+                    fetchRequest: fetchRequest,
+                    managedObjectContext: DataController.shared.viewContext,
+                    sectionNameKeyPath: nil,
+                    cacheName: "Virtual Tourist"
+                )
         
         do {
-            try fetchedResultsController!.performFetch()
+            try fetchedResultsController.performFetch()
             let photoCount = try fetchedResultsController.managedObjectContext.count(for: fetchedResultsController.fetchRequest)
             
             for index in 0..<photoCount {
@@ -71,10 +80,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
         setUpCollectionView()
         setMapCenter()
         getFlickrPhotoURL()
-        
         activityIndicator.startAnimating()
     }
- 
+    
     
     @IBAction func newCollectionsButton(_ sender: Any) {
         
@@ -159,7 +167,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
     
     
     func saveToCoreData(photos: [FlickrPhoto]) {
-       
+        
         for flickrPhoto in photos {
             let photo = Photo(context: DataController.shared.viewContext)
             photo.imageURL = flickrPhoto.imageURLString()

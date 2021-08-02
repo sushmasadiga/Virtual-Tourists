@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension PhotoAlbumViewController : UICollectionViewDataSource, UICollectionViewDelegate {
+extension PhotoAlbumViewController :  UICollectionViewDataSource {
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -20,15 +20,15 @@ extension PhotoAlbumViewController : UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-           let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
-           let photoObject = savedPhotoObjects[indexPath.row]
-           
-           activityIndicator.stopAnimating()
-           cell.initWithPhoto(photoObject)
-           self.newCollectionsButton.isEnabled = true
-           
-           return cell
-       }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
+        let photoObject = savedPhotoObjects[indexPath.row]
+        
+        activityIndicator.stopAnimating()
+        cell.initWithPhoto(photoObject)
+        self.newCollectionsButton.isEnabled = true
+        
+        return cell
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width / numberOfColumns
@@ -50,30 +50,26 @@ extension PhotoAlbumViewController : UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
         if cell?.isSelected == true {
-            
-       let photo = fetchedResultsController.object(at: indexPath)
-               dataController.viewContext.delete(photo)
-               try? dataController.viewContext.save()
-              
-               DispatchQueue.main.async {
-                          collectionView.deleteItems(at: [indexPath])
-                          collectionView.reloadData()
-               }
+            savedPhotoObjects.remove(at: indexPath.count)
+            DispatchQueue.main.async {
+                collectionView.deleteItems(at: [indexPath])
+                collectionView.reloadData()
+            }
         }
     }
     
     func setUpCollectionView() {
-            collectionView.dataSource = self
-            collectionView.delegate = self
-            configureFlowLayout()
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        configureFlowLayout()
+    }
+    
+    func configureFlowLayout() {
+        if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            let cellSideLength = (collectionView.frame.width/3) - 1
+            flowLayout.itemSize = CGSize(width: cellSideLength, height: cellSideLength)
         }
-
-        func configureFlowLayout() {
-            if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-                let cellSideLength = (collectionView.frame.width/3) - 1
-                flowLayout.itemSize = CGSize(width: cellSideLength, height: cellSideLength)
-            }
-        }
+    }
     
 }
 

@@ -18,7 +18,7 @@ extension PhotoAlbumViewController  {
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
         
-        let coreDataPhotos = fetchedResultsController?.fetchedObjects
+        let coreDataPhotos = fetchedResultsController.fetchedObjects
         if let coreDataPhotos = coreDataPhotos, !coreDataPhotos.isEmpty {
             
             activityIndicator.stopAnimating()

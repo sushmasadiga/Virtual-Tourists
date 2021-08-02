@@ -34,7 +34,7 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
         let longPress: UILongPressGestureRecognizer = UILongPressGestureRecognizer()
         longPress.addTarget(self, action: #selector(recognizeLongPress(_ :)))
         mapView.addGestureRecognizer(longPress)
-        longPress.minimumPressDuration = 0.3
+        longPress.minimumPressDuration = 0.5
         addPins()
     }
     
@@ -71,8 +71,8 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
     
     fileprivate func setCenter() {
         let defaults = UserDefaults.standard
-        defaults.set(37.7749, forKey: "Lat")
-        defaults.set(-122.4194, forKey: "Lon")
+        defaults.set(12.9716, forKey: "Lat")
+        defaults.set(78.9629, forKey: "Lon")
         let center = CLLocationCoordinate2DMake(defaults.double(forKey: "Lat"), defaults.double(forKey: "Lon"))
         mapView.setCenter(center, animated: true)
         let mySpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
