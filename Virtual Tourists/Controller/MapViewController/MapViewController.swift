@@ -91,18 +91,20 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
     }
     
     @objc private func recognizeLongPress(_ sender: UILongPressGestureRecognizer) {
-        guard sender.state == UIGestureRecognizer.State.began else {
+        if sender.state == .began {
+            let location = sender.location(in: mapView)
+            let myCoordinate: CLLocationCoordinate2D = mapView.convert(location, toCoordinateFrom: mapView)
+            let myPin: MKPointAnnotation = MKPointAnnotation()
+            myPin.coordinate = myCoordinate
+            myPin.title = "Photos"
+            mapView.addAnnotation(myPin)
+            let pin = Pin(context: managedObjectContext)
+            pin.coordinate = myCoordinate
+            mapPins.append(pin)
+        }
+        else  {
             return
         }
-        let location = sender.location(in: mapView)
-        let myCoordinate: CLLocationCoordinate2D = mapView.convert(location, toCoordinateFrom: mapView)
-        let myPin: MKPointAnnotation = MKPointAnnotation()
-        myPin.coordinate = myCoordinate
-        myPin.title = "Photos"
-        mapView.addAnnotation(myPin)
-        let pin = Pin(context: managedObjectContext)
-        pin.coordinate = myCoordinate
-        mapPins.append(pin)
         saveContext()
         DataController.shared.save()
     }

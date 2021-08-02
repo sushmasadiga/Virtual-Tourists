@@ -12,6 +12,8 @@
 		4B02C46426B1B24A00D73D97 /* PhotoAlbumViewController+MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B02C46326B1B24A00D73D97 /* PhotoAlbumViewController+MapView.swift */; };
 		4B02C46626B1B27A00D73D97 /* PhotoAlbumViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B02C46526B1B27A00D73D97 /* PhotoAlbumViewController+CollectionView.swift */; };
 		4B02C4A826B47B0800D73D97 /* PhotoAlbumViewController+NSFetchedResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B02C4A726B47B0800D73D97 /* PhotoAlbumViewController+NSFetchedResult.swift */; };
+		4B50811426B7E176005E2256 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B50811326B7E176005E2256 /* UIViewController+Extension.swift */; };
+		4B50811626B7E308005E2256 /* PhotoCoredata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B50811526B7E308005E2256 /* PhotoCoredata.swift */; };
 		4BDABA1526B02F08002E4A26 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDABA1426B02F08002E4A26 /* AppDelegate.swift */; };
 		4BDABA1726B02F08002E4A26 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDABA1626B02F08002E4A26 /* SceneDelegate.swift */; };
 		4BDABA1926B02F08002E4A26 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDABA1826B02F08002E4A26 /* MapViewController.swift */; };
@@ -37,6 +39,8 @@
 		4B02C46326B1B24A00D73D97 /* PhotoAlbumViewController+MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoAlbumViewController+MapView.swift"; sourceTree = "<group>"; };
 		4B02C46526B1B27A00D73D97 /* PhotoAlbumViewController+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoAlbumViewController+CollectionView.swift"; sourceTree = "<group>"; };
 		4B02C4A726B47B0800D73D97 /* PhotoAlbumViewController+NSFetchedResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoAlbumViewController+NSFetchedResult.swift"; sourceTree = "<group>"; };
+		4B50811326B7E176005E2256 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
+		4B50811526B7E308005E2256 /* PhotoCoredata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCoredata.swift; sourceTree = "<group>"; };
 		4BDABA1126B02F08002E4A26 /* Virtual Tourists.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Virtual Tourists.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BDABA1426B02F08002E4A26 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BDABA1626B02F08002E4A26 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -143,6 +147,7 @@
 		4BDABA2826B02F8E002E4A26 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				4BDABA2C26B0314D002E4A26 /* Virtual Tourists.xcdatamodeld */,
 				4BDABA3126B03390002E4A26 /* Data Controller.swift */,
 			);
 			path = Model;
@@ -151,7 +156,8 @@
 		4BDABA2926B02F96002E4A26 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				4BDABA5626B05357002E4A26 /* Cell */,
+				4BDABA5726B05366002E4A26 /* PhotoCell.swift */,
+				4B50811326B7E176005E2256 /* UIViewController+Extension.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -189,17 +195,8 @@
 			children = (
 				4BDABA4C26B046E7002E4A26 /* FlickrImage.swift */,
 				4BDABA6226B09DF3002E4A26 /* AnnotationPinView.swift */,
-				4BDABA2C26B0314D002E4A26 /* Virtual Tourists.xcdatamodeld */,
 			);
 			path = Data;
-			sourceTree = "<group>";
-		};
-		4BDABA5626B05357002E4A26 /* Cell */ = {
-			isa = PBXGroup;
-			children = (
-				4BDABA5726B05366002E4A26 /* PhotoCell.swift */,
-			);
-			path = Cell;
 			sourceTree = "<group>";
 		};
 		4BDABA5D26B09C97002E4A26 /* Coredata */ = {
@@ -207,6 +204,7 @@
 			children = (
 				4BDABA5E26B09CA7002E4A26 /* Pin.swift */,
 				4BDABA6026B09CC9002E4A26 /* Photo.swift */,
+				4B50811526B7E308005E2256 /* PhotoCoredata.swift */,
 			);
 			path = Coredata;
 			sourceTree = "<group>";
@@ -289,6 +287,7 @@
 				4BDABA5526B04D6A002E4A26 /* MapViewController+Extension.swift in Sources */,
 				4BDABA4D26B046E7002E4A26 /* FlickrImage.swift in Sources */,
 				4BDABA5826B05366002E4A26 /* PhotoCell.swift in Sources */,
+				4B50811426B7E176005E2256 /* UIViewController+Extension.swift in Sources */,
 				4B02C4A826B47B0800D73D97 /* PhotoAlbumViewController+NSFetchedResult.swift in Sources */,
 				4B02C46626B1B27A00D73D97 /* PhotoAlbumViewController+CollectionView.swift in Sources */,
 				4B02C45F26B1B1DA00D73D97 /* NavigationController.swift in Sources */,
@@ -297,6 +296,7 @@
 				4B02C46426B1B24A00D73D97 /* PhotoAlbumViewController+MapView.swift in Sources */,
 				4BDABA6326B09DF3002E4A26 /* AnnotationPinView.swift in Sources */,
 				4BDABA4F26B0474E002E4A26 /* Flickr ClientAPI.swift in Sources */,
+				4B50811626B7E308005E2256 /* PhotoCoredata.swift in Sources */,
 				4BDABA1526B02F08002E4A26 /* AppDelegate.swift in Sources */,
 				4BDABA5326B047E7002E4A26 /* Network Errors.swift in Sources */,
 				4BDABA1726B02F08002E4A26 /* SceneDelegate.swift in Sources */,

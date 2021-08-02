@@ -65,11 +65,18 @@ extension PhotoAlbumViewController : UICollectionViewDataSource, UICollectionVie
         cell?.isSelected = false
     }
     
-    func showAlertMessage() {
-        let alertVc = UIAlertController(title: "Error", message: "Error retrieving data", preferredStyle: .alert)
-        alertVc.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-        self.present(alertVc, animated: true)
-    }
+    func setUpCollectionView() {
+            collectionView.dataSource = self
+            collectionView.delegate = self
+            configureFlowLayout()
+        }
+
+        func configureFlowLayout() {
+            if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+                let cellSideLength = (collectionView.frame.width/3) - 1
+                flowLayout.itemSize = CGSize(width: cellSideLength, height: cellSideLength)
+            }
+        }
     
 }
 
