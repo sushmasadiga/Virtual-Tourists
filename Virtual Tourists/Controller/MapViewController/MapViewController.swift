@@ -72,7 +72,7 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
     fileprivate func setCenter() {
         let defaults = UserDefaults.standard
         defaults.set(12.9716, forKey: "Lat")
-        defaults.set(78.9629, forKey: "Lon")
+        defaults.set(77.5946, forKey: "Lon")
         let center = CLLocationCoordinate2DMake(defaults.double(forKey: "Lat"), defaults.double(forKey: "Lon"))
         mapView.setCenter(center, animated: true)
         let mySpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
@@ -98,9 +98,9 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate, CLLocati
             myPin.coordinate = myCoordinate
             myPin.title = "Photos"
             mapView.addAnnotation(myPin)
-            let pin = Pin(context: managedObjectContext)
-            pin.coordinate = myCoordinate
-            mapPins.append(pin)
+//            let pin = Pin(context: managedObjectContext)
+//            pin.coordinate = myCoordinate
+//            mapPins.append(pin)
         }
         else  {
             return

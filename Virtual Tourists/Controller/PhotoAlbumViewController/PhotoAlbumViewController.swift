@@ -40,12 +40,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
     fileprivate func loadSavedData() -> [Photo]? {
         var photoArray: [Photo] = []
     
-        guard let pin = pin else {
-                    fatalError("pin is nil")
-                }
+        
 
         let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
-        fetchRequest.predicate =  NSPredicate(format: "pin == %@", pin)
+        fetchRequest.predicate =  NSPredicate(format: "pin == %@", pin!)
         let sortDescriptor = NSSortDescriptor(key: "imageURL", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
 

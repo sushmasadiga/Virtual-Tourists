@@ -36,15 +36,10 @@ extension MapViewController: MKMapViewDelegate {
         let myCoordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: locationLat!, longitude: locationLon!)
         let selectedPin: MKPointAnnotation = MKPointAnnotation()
         selectedPin.coordinate = myCoordinate
+    
+            vc.currentLatitude = selectedPin.coordinate.latitude
+            vc.currentLongitude = selectedPin.coordinate.longitude
         
-        for pin in annotations {
-            if pin.latitude == selectedPin.coordinate.latitude &&
-                pin.longitude == selectedPin.coordinate.longitude {
-                vc.pin = pin
-            }
-            vc.currentLatitude = pin.latitude
-            vc.currentLongitude = pin.longitude
-        }
         navigationController?.pushViewController(vc, animated: true)
     }
     
