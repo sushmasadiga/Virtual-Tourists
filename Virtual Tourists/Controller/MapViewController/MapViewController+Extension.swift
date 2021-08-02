@@ -60,37 +60,5 @@ extension MapViewController: MKMapViewDelegate {
 }
 
 
-extension MapViewController: NSFetchedResultsControllerDelegate {
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch type {
-        case .insert:
-            let pin = controller.object(at: newIndexPath!) as! Pin
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
-            mapView.addAnnotation(annotation)
-            print("pin inserted")
-            break
-        default:
-            break
-        }
-    }
-}
-
-extension MKMapView {
-    
-    func isInteractionEnabled(_ enabled: Bool) {
-        isScrollEnabled = enabled
-    }
-    
-    func addPinAnnotation(pin: Pin){
-        addAnnotation(AnnotationPinView(pin: pin))
-    }
-    
-    func clearAnnotations(){
-        removeAnnotations(annotations)
-    }
-}
-
 
 

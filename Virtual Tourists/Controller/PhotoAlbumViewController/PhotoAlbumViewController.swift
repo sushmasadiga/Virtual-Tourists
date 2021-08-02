@@ -73,13 +73,14 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegateFlowLa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+      
         mapView.delegate = self
         setUpCollectionView()
         setMapCenter()
         getFlickrPhotoURL()
         activityIndicator.startAnimating()
     }
+
     
     
     @IBAction func newCollectionsButton(_ sender: Any) {
